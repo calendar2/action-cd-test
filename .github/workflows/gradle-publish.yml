@@ -24,7 +24,7 @@ jobs:
     steps:
     # 1. vm에서 Repository를 내려받음
     - name: Checkout repository
-    - uses: actions/checkout@v4
+      uses: actions/checkout@v4
 
     # 2. jdk 세팅
     - name: Set up JDK 21
