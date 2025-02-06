@@ -1,0 +1,60 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
+
+name: Gradle Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    # Workflow가 실행되는 vm의 OS 지정
+    runs-on: ubuntu-latest
+
+    # 권한
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    # 1. vm에서 Repository를 내려받음
+    - name: Checkout repository
+    - uses: actions/checkout@v4
+
+    # 2. jdk 세팅
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    # 3. 빌드 권한 부여
+    - name: Grant execute permission for Gradle Wrapper
+      run: chmod +x gradlew
+
+    # 4. gradle 설정 (Gradle 캐싱 및 최적화)
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4 # v4.0.0
+      with:
+        gradle-home-cache-cleanup: true
+
+    # 5. 빌드 시작
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
+    # the publishing section of your build.gradle
+    
+    # 5. publish 시작
+    - name: Publish to GitHub Packages
+      run: ./gradlew publish
+      env:
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
