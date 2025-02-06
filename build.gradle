@@ -16,6 +16,14 @@ java {
 
 repositories {
 	mavenCentral()
+	maven {
+		name = "GitHubPackages"
+		url = uri("https://maven.pkg.github.com/calendar2/action-cd-test")
+		credentials {
+			username = System.getenv("USERNAME") ?: ""
+			password = System.getenv("TOKEN") ?: ""
+		}
+	}
 }
 
 dependencies {
@@ -37,17 +45,6 @@ publishing {
 			groupId = 'com.example'
 			artifactId = 'my-app' // 업로드될 패키지 이름
 			version = '0.0.1-SNAPSHOT'
-		}
-
-		repositories {
-			maven {
-				name = "GitHubPackages"
-				url = uri("https://maven.pkg.github.com/calendar2/action-cd-test")
-				credentials {
-					username = System.getenv("USERNAME") ?: ""
-					password = System.getenv("TOKEN") ?: ""
-				}
-			}
 		}
 	}
 }
