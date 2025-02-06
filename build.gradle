@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.2'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'maven-publish' // Maven Publish 플러그인 추가
 }
 
 group = 'com.example'
@@ -26,4 +27,27 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+
+			groupId = 'com.example'
+			artifactId = 'my-app' // 업로드될 패키지 이름
+			version = '0.0.1-SNAPSHOT'
+		}
+
+		repositories {
+			maven {
+				name = "GitHubPackages"
+				url = uri("https://maven.pkg.github.com/calendar2/action-cd-test")
+				credentials {
+					username = System.getenv("USERNAME") ?: ""
+					password = System.getenv("TOKEN") ?: ""
+				}
+			}
+		}
+	}
 }
